@@ -33,7 +33,7 @@ function signRequest(timestamp, requestId, payload) {
 async function callMasApi(command) {
   requireConfig();
 
-  const timestamp = Date.now().toString();
+  const timestamp = Date.now();
   const requestId = randomUUID();
   const payload = JSON.stringify(command);
   const signature = signRequest(timestamp, requestId, payload);
