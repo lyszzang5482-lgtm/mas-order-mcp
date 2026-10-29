@@ -147,7 +147,45 @@ function createServer() {
       }
     }
   );
+  server.tool(
+    "search_expected_orders",
+    "등록되어 있는 MAS 예상 주문을 검색합니다. 조회만 하며 주문을 등록하거나 변경하지 않습니다.",
+    {
+      업체명: z.string().describe("거래처/업체명"),
+      부대명: z.string().optional().describe("납품 부대명"),
+      품목: z.string().optional().describe("사용자가 말한 품목명"),
+      물류납품일: z.string().optional().describe("YYYY-MM-DD 형식"),
+      부대납품일: z.string().optional().describe("YYYY-MM-DD 형식"),
+      수량: z.number().positive().optional().describe("납품 수량")
+    },
+    async (order) => {
+      try {
+        const result = await callMasApi({
+          action: "search_expected",
+          order
+        });
 
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(result, null, 2)
+            }
+          ]
+        };
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text",
+              text: `예상 주문 검색 실패: ${error.message}`
+            }
+          ]
+        };
+      }
+    }
+  );
   return server;
 }
 
