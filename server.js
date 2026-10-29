@@ -27,7 +27,9 @@ function signRequest(timestamp, requestId, payload) {
   return crypto
     .createHmac("sha256", MAS_HMAC_KEY)
     .update(message, "utf8")
-.digest("base64url");
+.digest("base64")
+.replace(/\+/g, "-")
+.replace(/\//g, "_");
 }
 
 async function callMasApi(command) {
