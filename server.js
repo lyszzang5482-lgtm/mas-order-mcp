@@ -186,6 +186,45 @@ function createServer() {
       }
     }
   );
+    server.tool(
+    "confirm_expected_order",
+    "등록되어 있는 MAS 예상 주문을 찾아 확정 주문으로 변경합니다. 사용자가 명확하게 확정 변경을 요청했을 때만 호출합니다.",
+    {
+      업체명: z.string().describe("거래처/업체명"),
+      부대명: z.string().describe("납품 부대명"),
+      품목: z.string().describe("사용자가 말한 품목명"),
+      물류납품일: z.string().describe("YYYY-MM-DD 형식"),
+      부대납품일: z.string().describe("YYYY-MM-DD 형식"),
+      수량: z.number().positive().describe("납품 수량")
+    },
+    async (order) => {
+      try {
+        const result = await callMasApi({
+          action: "confirm_expected",
+          order
+        });
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(result, null, 2)
+            }
+          ]
+        };
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text",
+              text: `예상 주문 확정 변경 실패: ${error.message}`
+            }
+          ]
+        };
+      }
+    }
+  );
   return server;
 }
 
