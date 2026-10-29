@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL;
+const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL || process.env.MAS_API_URL;
 const MAS_HMAC_KEY = process.env.MAS_HMAC_KEY;
 
 function requireConfig() {
