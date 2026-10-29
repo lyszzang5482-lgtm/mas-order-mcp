@@ -225,6 +225,45 @@ function createServer() {
       }
     }
   );
+  server.tool(
+  "update_confirmed_order",
+  "이미 확정된 MAS 주문을 찾아 수량 등 확정 정보를 수정합니다. 사용자가 명확하게 기존 확정 주문의 수정을 요청했을 때만 호출합니다.",
+  {
+    업체명: z.string().describe("거래처/업체명"),
+    부대명: z.string().describe("납품 부대명"),
+    품목: z.string().describe("사용자가 말한 품목명"),
+    물류납품일: z.string().describe("YYYY-MM-DD 형식"),
+    부대납품일: z.string().describe("YYYY-MM-DD 형식"),
+    수량: z.number().positive().describe("변경할 최종 확정 수량")
+  },
+  async (order) => {
+    try {
+      const result = await callMasApi({
+        action: "update_confirmed",
+        order
+      });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: `확정 주문 수정 실패: ${error.message}`
+          }
+        ]
+      };
+    }
+  }
+);
   return server;
 }
 
